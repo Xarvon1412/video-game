@@ -1,19 +1,6 @@
-from dataclasses import dataclass, field
 
 game_on = True
-directions = ["up", "down", "left", "right"]
-#directions = {
-#    'vertical' : {
-#        'up': MovementSystem.up(),
-#        'down': MovementSystem.down(),
-#    },
-#    'horizontal' : {
-#        'left' : MovementSystem.left(),
-#        'right' : MovementSystem.right(),
-#    }
-#}
 commands = ["quit"]
-
 
 class Position:
     def __init__(self, x, y):
