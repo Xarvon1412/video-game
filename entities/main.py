@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 
+game_on = True
 directions = ["up", "down", "left", "right"]
 #directions = {
 #    'vertical' : {
@@ -32,16 +33,17 @@ class Player:
 
 class MovementSystem:
     direction_map = {
-        'up' : lambda y : y - 1,
-        'down' : lambda y : y + 1,
-        'left' : lambda x : x - 1,
-        'right' : lambda x : x + 1,
+        'up' : (0, -1),
+        'down' : (0, 1),
+        'left' : (-1, 0),
+        'right' : (1, 0),
     }
         
     @staticmethod
     def move(object_moving, direction):
         if direction in MovementSystem.direction_map:
-            object_moving.position.x, object_moving.position.y = MovementSystem.direction_map[direction](object_moving.position.x), MovementSystem.direction_map[direction](object_moving.position.y)
+            object_moving.position.x += MovementSystem.direction_map[direction][0]
+            object_moving.position.y += MovementSystem.direction_map[direction][1]
 
 class InputSystem:
     @staticmethod
@@ -50,9 +52,10 @@ class InputSystem:
         if user_input in directions:
             return user_input
         elif user_input in commands:
-            return None
+            global game_on
+            game_on = False
         else:
-            return None
+            game_on = False
 
 
 class RenderSystem:
@@ -60,12 +63,10 @@ class RenderSystem:
     def render(player_position):
         pass
 
-
 new_player = Player()
 
-print((new_player.position.x, new_player.position.y))
-# InputSystem.obtain_direction()
+while game_on:
+    print((new_player.position.x, new_player.position.y))
+    user_input = InputSystem.check_input_type()
+    MovementSystem.move(new_player, user_input)
 
-user_input = InputSystem.check_input_type()
-MovementSystem.move(new_player, user_input)
-print((new_player.position.x, new_player.position.y))
