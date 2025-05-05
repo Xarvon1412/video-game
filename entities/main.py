@@ -1,4 +1,16 @@
+from dataclasses import dataclass, field
+
 directions = ["up", "down", "left", "right"]
+#directions = {
+#    'vertical' : {
+#        'up': MovementSystem.up(),
+#        'down': MovementSystem.down(),
+#    },
+#    'horizontal' : {
+#        'left' : MovementSystem.left(),
+#        'right' : MovementSystem.right(),
+#    }
+#}
 commands = ["quit"]
 
 
@@ -6,13 +18,11 @@ class Position:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.current_position = (self.x, self.y)
 
 
 class Health:
     def __init__(self, health):
         self.health = health
-
 
 class Player:
     def __init__(self):
@@ -39,27 +49,27 @@ class MovementSystem:
 
     @staticmethod
     def move(object_moving, direction):
-        if hasattr(object_moving, "position"):
-            object_moving.position.y = getattr(MovementSystem, direction, object_moving)
+        if direction == 'up' or direction == 'down':
+            object_moving.position.y = getattr(MovementSystem, direction)(object_moving.position.y)
 
-    #            object_moving.position.x = locals()[direction](object_moving.position.x)
+        if direction == 'left' or direction == 'right':
+            object_moving.position.x = getattr(MovementSystem,direction)(object_moving.position.x)
+#        if direction == 'up':
+#           object_moving.position.y = MovementSystem.up(object_moving.position.y)
+#      if direction = 'down':
+
 
 
 class InputSystem:
     @staticmethod
-    def obtain_direction():
-        user_direction = input("Please input a direction: ")
-        return user_direction.lower()
-
-    @staticmethod
     def check_input_type():
-        user_input = input("What do you wanna do?").lower()
+        user_input = input("What do you wanna do?\n").lower()
         if user_input in directions:
             return user_input
         elif user_input in commands:
-            pass
+            return None
         else:
-            pass
+            return None
 
 
 class RenderSystem:
