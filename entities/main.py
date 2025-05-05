@@ -31,34 +31,17 @@ class Player:
 
 
 class MovementSystem:
-    @staticmethod
-    def up(y):
-        return y - 1
-
-    @staticmethod
-    def down(y):
-        return y + 1
-
-    @staticmethod
-    def left(x):
-        return x - 1
-
-    @staticmethod
-    def right(x):
-        return x + 1
-
+    direction_map = {
+        'up' : lambda y : y - 1,
+        'down' : lambda y : y + 1,
+        'left' : lambda x : x - 1,
+        'right' : lambda x : x + 1,
+    }
+        
     @staticmethod
     def move(object_moving, direction):
-        if direction == 'up' or direction == 'down':
-            object_moving.position.y = getattr(MovementSystem, direction)(object_moving.position.y)
-
-        if direction == 'left' or direction == 'right':
-            object_moving.position.x = getattr(MovementSystem,direction)(object_moving.position.x)
-#        if direction == 'up':
-#           object_moving.position.y = MovementSystem.up(object_moving.position.y)
-#      if direction = 'down':
-
-
+        if direction in MovementSystem.direction_map:
+            object_moving.position.x, object_moving.position.y = MovementSystem.direction_map[direction](object_moving.position.x), MovementSystem.direction_map[direction](object_moving.position.y)
 
 class InputSystem:
     @staticmethod
