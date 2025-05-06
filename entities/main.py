@@ -48,12 +48,11 @@ class InputSystem:
 class RenderSystem:
     @staticmethod
     def render(player_position):
-        print(rooms["description"])
-#        for room in rooms:
-#            print(room['description'])
-#        for room in room_dict:
-#            if player_position.x == room['cords']['x'] and player_position.y == room['cords']['y']:
-#                print(room['description'])
+#        for room in rooms.values():
+#            print(room["description"])
+        for room in rooms.values():
+            if player_position.x == room['coords']['x'] and player_position.y == room['coords']['y']:
+                print(room['description'])
 
 
 new_player = Player()
