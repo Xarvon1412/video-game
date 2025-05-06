@@ -1,4 +1,6 @@
+#import room_descriptions
 from room_descriptions import rooms
+#rooms = room_descriptions.rooms
 game_on = True
 commands = ["quit"]
 
@@ -45,17 +47,20 @@ class InputSystem:
 
 class RenderSystem:
     @staticmethod
-    def render(player_position, room_dict):
-        for room in room_dict:
-            if player_position.x == room['cords']['x'] and player_position.y == room['cords']['y']:
-                print(room['description'])
+    def render(player_position):
+        print(rooms["description"])
+#        for room in rooms:
+#            print(room['description'])
+#        for room in room_dict:
+#            if player_position.x == room['cords']['x'] and player_position.y == room['cords']['y']:
+#                print(room['description'])
 
 
 new_player = Player()
 
 while game_on:
     print((new_player.position.x, new_player.position.y))
-    RenderSystem.render(new_player.position, rooms)
+    RenderSystem.render(new_player.position)
     user_input = InputSystem.check_input_type()
     MovementSystem.move(new_player, user_input)
 
