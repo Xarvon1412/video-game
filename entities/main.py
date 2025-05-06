@@ -1,6 +1,5 @@
-#import room_descriptions
 from room_descriptions import rooms
-#rooms = room_descriptions.rooms
+from uuid import uuid4
 game_on = True
 commands = ["quit"]
 
@@ -17,6 +16,16 @@ class Player:
     def __init__(self):
         self.position = Position(x=2, y=3)
         self.health = Health(100)
+
+class EntityManager:
+    def __init__(self):
+        self.entities = set()
+
+    def create_entity(self, *components):
+        new_entity = {}
+        entity_id = uuid4()
+        new_entity.update({entity_id: list(components)})
+
 
 class MovementSystem:
     direction_map = {
@@ -44,21 +53,24 @@ class InputSystem:
         else:
             game_on = False
 
-
 class RenderSystem:
     @staticmethod
     def render(player_position):
-#        for room in rooms.values():
-#            print(room["description"])
         for room in rooms.values():
             if player_position.x == room['coords']['x'] and player_position.y == room['coords']['y']:
                 print(room['description'])
+                return
+        print("Huh. You shouldn't be here. Don't know how you got out of bounds, but you should probably go back")
 
 
 new_player = Player()
+entity_manager = EntityManager()
 
 while game_on:
-    print((new_player.position.x, new_player.position.y))
+    entity_manager.create_entity('health', 'left arm', 'head')
+    id = uuid4()
+    print(id)
+    #    print((new_player.position.x, new_player.position.y))
     RenderSystem.render(new_player.position)
     user_input = InputSystem.check_input_type()
     MovementSystem.move(new_player, user_input)
