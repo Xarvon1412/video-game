@@ -1,10 +1,8 @@
 from movement_system import MovementSystem, RenderSystem
 from entity_manager import EntityManager
 from input_system import InputSystem
-from combat_components import Health
 
 game_on = True
-commands = ["quit"]
 
 
 class Player:
