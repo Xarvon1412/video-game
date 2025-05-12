@@ -1,15 +1,14 @@
 from combat_components import Health
-from movement_components import Position
+from movement_components import Position, Moveable
 from movement_system import MovementSystem
+from input_system import InputSystem
 
 
-class EntityManager:
+class World:
     def __init__(self):
         self.entities = set()
         self.entity_count = 0
         self.component_map = {}
-
-    #        self.components = {}
 
     def create_entity(self):
         entity_id = self.entity_count
@@ -17,24 +16,48 @@ class EntityManager:
         self.entity_count += 1
         return entity_id
 
-    def add_component(self, entity_id, component, component_type):
-        self.component_type = []
-        self.component_type.append(component)
-        #        self.components[component_type] = []
-        #        self.components[component_type].append(component_type)
-        self.component_map[component_type] = [entity_id]
-
-    def update(self):
-        for component in self.component_map:
-            if component == "player_controlled":
-                pass
+    def components_for_entity(self, entity):
+        if entity in self.entities:
+            pass
 
 
-new_manager = EntityManager()
+class SparseSet:
+    components = []
 
-player = new_manager.create_entity()
+    def __init__(self, component):
+        self.type = component
+        self.sparse = {}
+        self.entities = []
+        self.components = []
+        SparseSet.components.append(self)
 
-new_manager.add_component(player, Health(100), Health.component)
-new_manager.add_component(player, Health(200), Health)
+    def add(self, entity, component):
+        if entity not in self.sparse:
+            self.sparse[entity] = component
+            self.components.append(component)
+            self.entities.append(entity)
 
-print(new_manager.component_map)
+    def get(self, entity):
+        if entity in self.sparse:
+            return(self.sparse[entity])
+
+
+world = World()
+
+player = world.create_entity()
+enemy = world.create_entity()
+
+PositionComponents = SparseSet(Position.name)
+PlayerControlledComponents = SparseSet(Moveable.name)
+
+PositionComponents.add(player, Position(x=2, y=3))
+PlayerControlledComponents.add(player, Moveable())
+PositionComponents.add(enemy, Position(x=1, y=1))
+
+print(PositionComponents.get(player))
+
+for entity in PlayerControlledComponents.entities:
+    MovementSystem.move(PositionComponents.components[entity], 'up')
+
+print(PositionComponents.get(player))
+print(SparseSet.components)

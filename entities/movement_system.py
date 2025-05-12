@@ -12,8 +12,8 @@ class MovementSystem:
     @staticmethod
     def move(object_moving, direction):
         if direction in MovementSystem.direction_map:
-            object_moving.position.x += MovementSystem.direction_map[direction][0]
-            object_moving.position.y += MovementSystem.direction_map[direction][1]
+            object_moving.x += MovementSystem.direction_map[direction][0]
+            object_moving.y += MovementSystem.direction_map[direction][1]
 
 
 class RenderSystem:

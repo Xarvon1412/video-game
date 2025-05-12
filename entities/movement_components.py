@@ -1,9 +1,13 @@
+from dataclasses import dataclass
+
+@dataclass
 class Position:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
+    name: str = "Position"
+    x: int = 0
+    y: int = 0
+    
 
-
+@dataclass
 class Moveable:
-    def __init__(self):
-        self.is_moveable = True
+    name: str = "Moveable"
+    moveable: bool = True
