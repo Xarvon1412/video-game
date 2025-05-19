@@ -20,16 +20,33 @@ class World:
         if entity in self.entities:
             pass
 
+    def view(self, *sparse_sets):
+        #        common_entities = zip(sparse_sets)
+        #        common_entities = set()
+        #        for sparse_set in sparse_sets:
+        #            common_entities &= set(sparse_set)
+        #        print(list(common_entities))
+        smallest_sparse_set = []
+
+        for sparse_set in sparse_sets:
+            
+
+        for sparse in sparse_sets:
+            sparse = set(sparse)
+            shared_entities &= sparse
+
+        print(shared_entities)
+
 
 class SparseSet:
-    components = []
+    component_types = []
 
     def __init__(self, component):
         self.type = component
         self.sparse = {}
         self.entities = []
         self.components = []
-        SparseSet.components.append(self)
+        SparseSet.component_types.append(self)
 
     def add(self, entity, component):
         if entity not in self.sparse:
@@ -39,7 +56,7 @@ class SparseSet:
 
     def get(self, entity):
         if entity in self.sparse:
-            return(self.sparse[entity])
+            return self.sparse[entity]
 
 
 world = World()
@@ -57,7 +74,12 @@ PositionComponents.add(enemy, Position(x=1, y=1))
 print(PositionComponents.get(player))
 
 for entity in PlayerControlledComponents.entities:
-    MovementSystem.move(PositionComponents.components[entity], 'up')
+    MovementSystem.move(PositionComponents.components[entity], "up")
 
 print(PositionComponents.get(player))
-print(SparseSet.components)
+
+for component_type in SparseSet.component_types:
+    print(component_type.components)
+
+
+world.view(PositionComponents.entities, PlayerControlledComponents.entities)
