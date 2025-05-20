@@ -1,7 +1,7 @@
 from combat_components import Health
-from movement_components import Position, Moveable
+from movement_components import Position, Velocity
 from movement_system import MovementSystem
-from input_system import InputSystem
+from input_system import InputSystem, PlayerControlled
 
 
 class World:
@@ -21,21 +21,20 @@ class World:
             pass
 
     def view(self, *sparse_sets):
-        #        common_entities = zip(sparse_sets)
-        #        common_entities = set()
-        #        for sparse_set in sparse_sets:
-        #            common_entities &= set(sparse_set)
-        #        print(list(common_entities))
-        smallest_sparse_set = []
-
-        for sparse_set in sparse_sets:
-            
+        smallest_sparse_set = sparse_sets[0]
+        for sparse in sparse_sets:
+            if len(sparse) < len(smallest_sparse_set):
+                smallest_sparse_set = sparse
+            else:
+                pass
+        
+        shared_entities = set(smallest_sparse_set)
 
         for sparse in sparse_sets:
             sparse = set(sparse)
             shared_entities &= sparse
 
-        print(shared_entities)
+        return(shared_entities)
 
 
 class SparseSet:
@@ -54,32 +53,52 @@ class SparseSet:
             self.components.append(component)
             self.entities.append(entity)
 
+        elif entity in self.sparse:
+            self.sparse[entity] = component
+            self.components[entity] = component
+
     def get(self, entity):
         if entity in self.sparse:
             return self.sparse[entity]
 
 
 world = World()
+game_on = True
 
 player = world.create_entity()
 enemy = world.create_entity()
+player_two = world.create_entity()
 
 PositionComponents = SparseSet(Position.name)
-PlayerControlledComponents = SparseSet(Moveable.name)
+PlayerControlledComponents = SparseSet(PlayerControlled.name)
+VelocityComponents = SparseSet(Velocity.name)
 
+VelocityComponents.add(player, Velocity(x=0, y=0))
 PositionComponents.add(player, Position(x=2, y=3))
-PlayerControlledComponents.add(player, Moveable())
+PlayerControlledComponents.add(player, PlayerControlled())
+
 PositionComponents.add(enemy, Position(x=1, y=1))
 
-print(PositionComponents.get(player))
 
-for entity in PlayerControlledComponents.entities:
-    MovementSystem.move(PositionComponents.components[entity], "up")
+for entity in world.view(PositionComponents.entities):
+    print(PositionComponents.get(entity))
 
-print(PositionComponents.get(player))
+#for entity in world.view(PositionComponents.entities, PlayerControlledComponents.entities):
+#    MovementSystem.move(PositionComponents.components[entity], "up")
 
-for component_type in SparseSet.component_types:
-    print(component_type.components)
+for entity in world.view(PositionComponents.entities):
+    print(PositionComponents.get(entity))
 
+print(world.view(PositionComponents.entities, PlayerControlledComponents.entities))
 
-world.view(PositionComponents.entities, PlayerControlledComponents.entities)
+while game_on:
+    for entity in world.view(PositionComponents.entities, PlayerControlledComponents.entities):
+        user_input = InputSystem.get_input()
+        if InputSystem.check_input_type(user_input) == 1:
+            VelocityComponents.add(entity, Velocity(InputSystem.direction_map[user_input]))
+            MovementSystem.move(PositionComponents.components[entity], VelocityComponents.components[entity])
+            print(PositionComponents.get(entity))
+        elif InputSystem.check_input_type(user_input) == 2:
+            quit()
+        else:
+            print("Error")

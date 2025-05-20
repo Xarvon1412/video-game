@@ -11,3 +11,10 @@ class Position:
 class Moveable:
     name: str = "Moveable"
     moveable: bool = True
+
+@dataclass
+class Velocity:
+    name: str = "Velocity"
+    direction: str = "none"
+    x: int = direction_map[direction][0]
+    y: int = direction_map[direction][1]
