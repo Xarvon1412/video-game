@@ -29,10 +29,6 @@ class InputSystem:
         else:
             return 3
 
-    @staticmethod
-    def return_direction(user_input):
-        return InputSystem.direction_map[user_input]
-
 
 @dataclass
 class PlayerControlled:

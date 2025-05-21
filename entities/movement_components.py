@@ -19,3 +19,9 @@ class Velocity:
     x: int
     y: int
     name: str = "Velocity"
+
+
+@dataclass
+class Perspective:
+    current: bool
+    name: str = "Perspective"

@@ -1,6 +1,6 @@
 from combat_components import Health
-from movement_components import Position, Velocity
-from movement_system import MovementSystem
+from movement_components import Perspective, Position, Velocity
+from movement_system import MovementSystem, RenderSystem
 from input_system import InputSystem, PlayerControlled
 
 
@@ -72,24 +72,15 @@ player_two = world.create_entity()
 PositionComponents = SparseSet(Position.name)
 PlayerControlledComponents = SparseSet(PlayerControlled.name)
 VelocityComponents = SparseSet(Velocity.name)
+PerspectiveComponents = SparseSet(Perspective.name)
 
 VelocityComponents.add(player, Velocity(x=0, y=0))
 PositionComponents.add(player, Position(x=2, y=3))
 PlayerControlledComponents.add(player, PlayerControlled())
+PerspectiveComponents.add(player, Perspective(current=True))
 
 PositionComponents.add(enemy, Position(x=1, y=1))
 
-
-for entity in world.view(PositionComponents.entities):
-    print(PositionComponents.get(entity))
-
-# for entity in world.view(PositionComponents.entities, PlayerControlledComponents.entities):
-#    MovementSystem.move(PositionComponents.components[entity], "up")
-
-for entity in world.view(PositionComponents.entities):
-    print(PositionComponents.get(entity))
-
-print(world.view(PositionComponents.entities, PlayerControlledComponents.entities))
 
 while game_on:
     for entity in world.view(
@@ -108,7 +99,9 @@ while game_on:
                 PositionComponents.components[entity],
                 VelocityComponents.components[entity],
             )
-            print(PositionComponents.get(entity))
+            for entity in world.view(PerspectiveComponents.entities):
+                if PerspectiveComponents.get(entity).current:
+                    RenderSystem.render(PositionComponents.get(entity))
         elif InputSystem.check_input_type(user_input) == 2:
             quit()
         else:
