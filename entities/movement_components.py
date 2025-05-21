@@ -9,12 +9,6 @@ class Position:
 
 
 @dataclass
-class Moveable:
-    name: str = "Moveable"
-    moveable: bool = True
-
-
-@dataclass
 class Velocity:
     x: int
     y: int

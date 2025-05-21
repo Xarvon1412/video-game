@@ -40,8 +40,8 @@ class World:
 class SparseSet:
     component_types = []
 
-    def __init__(self, component):
-        self.type = component
+    def __init__(self, component_type):
+        self.type = component_type
         self.sparse = {}
         self.entities = []
         self.components = []
