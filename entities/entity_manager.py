@@ -20,19 +20,19 @@ class World:
         if entity in self.entities:
             pass
 
-    def view(self, *sparse_sets):
-        smallest_sparse_set = sparse_sets[0]
-        for sparse in sparse_sets:
-            if len(sparse) < len(smallest_sparse_set):
-                smallest_sparse_set = sparse
+    def view(self, *components):
+        smallest_sparse = components[0].entities
+        for component in components:
+            if len(component.entities) < len(smallest_sparse):
+                smallest_sparse = component.entities
             else:
                 pass
 
-        shared_entities = set(smallest_sparse_set)
+        shared_entities = set(smallest_sparse)
 
-        for sparse in sparse_sets:
-            sparse = set(sparse)
-            shared_entities &= sparse
+        for component in components:
+            entity_set = set(component.entities)
+            shared_entities &= entity_set
 
         return shared_entities
 
@@ -62,47 +62,47 @@ class SparseSet:
             return self.sparse[entity]
 
 
-world = World()
-game_on = True
-
-player = world.create_entity()
-enemy = world.create_entity()
-player_two = world.create_entity()
-
-PositionComponents = SparseSet(Position.name)
-PlayerControlledComponents = SparseSet(PlayerControlled.name)
-VelocityComponents = SparseSet(Velocity.name)
-PerspectiveComponents = SparseSet(Perspective.name)
-
-VelocityComponents.add(player, Velocity(x=0, y=0))
-PositionComponents.add(player, Position(x=2, y=3))
-PlayerControlledComponents.add(player, PlayerControlled())
-PerspectiveComponents.add(player, Perspective(current=True))
-
-PositionComponents.add(enemy, Position(x=1, y=1))
-
-
-while game_on:
-    for entity in world.view(
-        PositionComponents.entities, PlayerControlledComponents.entities
-    ):
-        user_input = InputSystem.get_input()
-        if InputSystem.check_input_type(user_input) == 1:
-            VelocityComponents.add(
-                entity,
-                Velocity(
-                    x=InputSystem.direction_map[user_input][0],
-                    y=InputSystem.direction_map[user_input][1],
-                ),
-            )
-            MovementSystem.move(
-                PositionComponents.components[entity],
-                VelocityComponents.components[entity],
-            )
-            for entity in world.view(PerspectiveComponents.entities):
-                if PerspectiveComponents.get(entity).current:
-                    RenderSystem.render(PositionComponents.get(entity))
-        elif InputSystem.check_input_type(user_input) == 2:
-            quit()
-        else:
-            print("Error")
+# world = World()
+# game_on = True
+#
+# player = world.create_entity()
+# enemy = world.create_entity()
+# player_two = world.create_entity()
+#
+# PositionComponents = SparseSet(Position.name)
+# PlayerControlledComponents = SparseSet(PlayerControlled.name)
+# VelocityComponents = SparseSet(Velocity.name)
+# PerspectiveComponents = SparseSet(Perspective.name)
+#
+# VelocityComponents.add(player, Velocity(x=0, y=0))
+# PositionComponents.add(player, Position(x=2, y=3))
+# PlayerControlledComponents.add(player, PlayerControlled())
+# PerspectiveComponents.add(player, Perspective(current=True))
+#
+# PositionComponents.add(enemy, Position(x=1, y=1))
+#
+#
+# while game_on:
+#    for entity in world.view(
+#        PositionComponents.entities, PlayerControlledComponents.entities
+#    ):
+#        user_input = InputSystem.get_input()
+#        if InputSystem.check_input_type(user_input) == 1:
+#            VelocityComponents.add(
+#                entity,
+#                Velocity(
+#                    x=InputSystem.direction_map[user_input][0],
+#                    y=InputSystem.direction_map[user_input][1],
+#                ),
+#            )
+#            MovementSystem.move(
+#                PositionComponents.components[entity],
+#                VelocityComponents.components[entity],
+#            )
+#            for entity in world.view(PerspectiveComponents.entities):
+#                if PerspectiveComponents.get(entity).current:
+#                    RenderSystem.render(PositionComponents.get(entity))
+#        elif InputSystem.check_input_type(user_input) == 2:
+#            quit()
+#        else:
+#            print("Error")

@@ -2,14 +2,10 @@ from room_descriptions import rooms
 
 
 class MovementSystem:
-
     @staticmethod
     def move(current_position, velocity):
         current_position.x += velocity.x
         current_position.y += velocity.y
-#        if direction in MovementSystem.direction_map:
-#            object_moving.x += MovementSystem.direction_map[direction][0]
-#            object_moving.y += MovementSystem.direction_map[direction][1]
 
 
 class RenderSystem:
