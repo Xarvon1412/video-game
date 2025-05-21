@@ -14,6 +14,7 @@ class InputSystem:
     commands = {
         "quit": 2,
     }
+
     @staticmethod
     def get_input():
         user_input = input("What do you wanna do?\n").lower()
@@ -27,6 +28,11 @@ class InputSystem:
             return 2
         else:
             return 3
+
+    @staticmethod
+    def return_direction(user_input):
+        return InputSystem.direction_map[user_input]
+
 
 @dataclass
 class PlayerControlled:

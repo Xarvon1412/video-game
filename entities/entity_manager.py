@@ -27,14 +27,14 @@ class World:
                 smallest_sparse_set = sparse
             else:
                 pass
-        
+
         shared_entities = set(smallest_sparse_set)
 
         for sparse in sparse_sets:
             sparse = set(sparse)
             shared_entities &= sparse
 
-        return(shared_entities)
+        return shared_entities
 
 
 class SparseSet:
@@ -83,7 +83,7 @@ PositionComponents.add(enemy, Position(x=1, y=1))
 for entity in world.view(PositionComponents.entities):
     print(PositionComponents.get(entity))
 
-#for entity in world.view(PositionComponents.entities, PlayerControlledComponents.entities):
+# for entity in world.view(PositionComponents.entities, PlayerControlledComponents.entities):
 #    MovementSystem.move(PositionComponents.components[entity], "up")
 
 for entity in world.view(PositionComponents.entities):
@@ -92,11 +92,22 @@ for entity in world.view(PositionComponents.entities):
 print(world.view(PositionComponents.entities, PlayerControlledComponents.entities))
 
 while game_on:
-    for entity in world.view(PositionComponents.entities, PlayerControlledComponents.entities):
+    for entity in world.view(
+        PositionComponents.entities, PlayerControlledComponents.entities
+    ):
         user_input = InputSystem.get_input()
         if InputSystem.check_input_type(user_input) == 1:
-            VelocityComponents.add(entity, Velocity(InputSystem.direction_map[user_input]))
-            MovementSystem.move(PositionComponents.components[entity], VelocityComponents.components[entity])
+            VelocityComponents.add(
+                entity,
+                Velocity(
+                    x=InputSystem.direction_map[user_input][0],
+                    y=InputSystem.direction_map[user_input][1],
+                ),
+            )
+            MovementSystem.move(
+                PositionComponents.components[entity],
+                VelocityComponents.components[entity],
+            )
             print(PositionComponents.get(entity))
         elif InputSystem.check_input_type(user_input) == 2:
             quit()
