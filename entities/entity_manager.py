@@ -2,6 +2,10 @@ from combat_components import Health
 from movement_components import Perspective, Position, Velocity
 from movement_system import MovementSystem, RenderSystem
 from input_system import InputSystem, PlayerControlled
+import array
+import numpy
+
+STARTING_COMPONENT_COUNT = 5
 
 
 class World:
@@ -47,6 +51,9 @@ class SparseSet:
         self.components = []
         SparseSet.component_types.append(self)
 
+    def __repr__(self):
+        return f"Component: {self.type}"
+
     def add(self, entity, component):
         if entity not in self.sparse:
             self.sparse[entity] = component
@@ -61,6 +68,68 @@ class SparseSet:
         if entity in self.sparse:
             return self.sparse[entity]
 
+
+class SparseSetV2:
+    component_types = []
+
+    def __init__(self, component_type):
+        self.type = component_type
+        self.sparse = []
+        self.components = numpy.empty(MAX_ENTITIES, dtype="O")
+        self.entities = array.array("i")
+        SparseSet.component_types.append(self)
+
+    def add(self, entity, component):
+        if entity not in self.entities:
+            self.entities.append(entity)
+            self.components[entity] = component
+            self.sparse
+            print(numpy.where(self.components == component))
+
+
+class SparseSetV3:
+    def __init__(self, component_type):
+        self.type = component_type
+        self.next_index = 0
+        self.sparse = numpy.empty(STARTING_COMPONENT_COUNT, dtype="int")
+        self.components = numpy.empty(STARTING_COMPONENT_COUNT, dtype="O")
+        self.entities = numpy.empty(STARTING_COMPONENT_COUNT, dtype="int")
+
+    def add(self, entityid, component_object):
+        # Adds index of component and entity into sparse map at index of entity_id
+        self.sparse[entityid] = self.next_index
+
+        # Adds component into contiguous array for quick access
+        self.components[self.next_index] = component_object
+
+        # Adds entity_id into continguous array as mirror of component array
+        self.entities[self.next_index] = entityid
+
+        # Increments index due to array being pre-configured
+        self.next_index += 1
+
+        if self.next_index == self.sparse.size:
+            self.sparse.resize(self.next_index * 2)
+            self.components.resize(self.next_index * 2)
+            self.entities.resize(self.next_index * 2)
+
+        print(self.sparse)
+        print(self.components)
+        print(self.entities)
+
+
+newSparse = SparseSetV3("Position")
+next_entity = 0
+
+while True:
+    input()
+    newSparse.add(next_entity, Position(x=next_entity, y=0))
+
+    #    print(newSparse.sparse)
+    #    print(newSparse.components)
+    #    print(newSparse.entities)
+
+    next_entity += 1
 
 # world = World()
 # game_on = True
