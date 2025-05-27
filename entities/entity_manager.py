@@ -2,7 +2,6 @@ from combat_components import Health
 from movement_components import Perspective, Position, Velocity
 from movement_system import MovementSystem, RenderSystem
 from input_system import InputSystem, PlayerControlled
-import array
 import numpy
 
 STARTING_COMPONENT_COUNT = 5
@@ -11,8 +10,7 @@ STARTING_COMPONENT_COUNT = 5
 class World:
     def __init__(self):
         self.entities = set()
-        self.entity_count = 0
-        self.component_map = {}
+        self.entity_count = 1
 
     def create_entity(self):
         entity_id = self.entity_count
@@ -25,20 +23,49 @@ class World:
             pass
 
     def view(self, *components):
-        smallest_sparse = components[0].entities
+        smallest_entity_list = components[0].entities
         for component in components:
-            if len(component.entities) < len(smallest_sparse):
-                smallest_sparse = component.entities
+            if len(component.entities) < len(smallest_entity_list):
+                smallest_entity_list = component.entities
             else:
                 pass
 
-        shared_entities = set(smallest_sparse)
+        shared_entities = set(smallest_entity_list)
 
         for component in components:
             entity_set = set(component.entities)
             shared_entities &= entity_set
 
+        shared_entities.discard(0)
         return shared_entities
+
+
+# class SparseSet:
+#    component_types = []
+#
+#    def __init__(self, component_type):
+#        self.type = component_type
+#        self.sparse = {}
+#        self.entities = []
+#        self.components = []
+#        SparseSet.component_types.append(self)
+#
+#    def __repr__(self):
+#        return f"Component: {self.type}"
+#
+#    def add(self, entity, component):
+#        if entity not in self.sparse:
+#            self.sparse[entity] = component
+#            self.components.append(component)
+#            self.entities.append(entity)
+#
+#        elif entity in self.sparse:
+#            self.sparse[entity] = component
+#            self.components[entity] = component
+#
+#    def get(self, entity):
+#        if entity in self.sparse:
+#            return self.sparse[entity]
 
 
 class SparseSet:
@@ -46,90 +73,63 @@ class SparseSet:
 
     def __init__(self, component_type):
         self.type = component_type
-        self.sparse = {}
-        self.entities = []
-        self.components = []
-        SparseSet.component_types.append(self)
+        self.next_index = 0
+        self.sparse = numpy.zeros(shape=STARTING_COMPONENT_COUNT, dtype="uint")
+        self.components = numpy.empty(STARTING_COMPONENT_COUNT, dtype="O")
+        self.entities = numpy.zeros(STARTING_COMPONENT_COUNT, dtype="uint")
 
     def __repr__(self):
         return f"Component: {self.type}"
 
-    def add(self, entity, component):
-        if entity not in self.sparse:
-            self.sparse[entity] = component
-            self.components.append(component)
-            self.entities.append(entity)
-
-        elif entity in self.sparse:
-            self.sparse[entity] = component
-            self.components[entity] = component
-
-    def get(self, entity):
-        if entity in self.sparse:
-            return self.sparse[entity]
-
-
-class SparseSetV2:
-    component_types = []
-
-    def __init__(self, component_type):
-        self.type = component_type
-        self.sparse = []
-        self.components = numpy.empty(MAX_ENTITIES, dtype="O")
-        self.entities = array.array("i")
-        SparseSet.component_types.append(self)
-
-    def add(self, entity, component):
-        if entity not in self.entities:
-            self.entities.append(entity)
-            self.components[entity] = component
-            self.sparse
-            print(numpy.where(self.components == component))
-
-
-class SparseSetV3:
-    def __init__(self, component_type):
-        self.type = component_type
-        self.next_index = 0
-        self.sparse = numpy.empty(STARTING_COMPONENT_COUNT, dtype="int")
-        self.components = numpy.empty(STARTING_COMPONENT_COUNT, dtype="O")
-        self.entities = numpy.empty(STARTING_COMPONENT_COUNT, dtype="int")
-
     def add(self, entityid, component_object):
-        # Adds index of component and entity into sparse map at index of entity_id
-        self.sparse[entityid] = self.next_index
+        if entityid not in self.entities:
+            # Adds index of component and entity into sparse map at index of entity_id
+            self.sparse[entityid] = self.next_index
 
-        # Adds component into contiguous array for quick access
-        self.components[self.next_index] = component_object
+            # Adds component into contiguous array for quick access
+            self.components[self.next_index] = component_object
 
-        # Adds entity_id into continguous array as mirror of component array
-        self.entities[self.next_index] = entityid
+            # Adds entity_id into continguous array as mirror of component array
+            self.entities[self.next_index] = entityid
 
-        # Increments index due to array being pre-configured
-        self.next_index += 1
+            # Increments index due to array being pre-configured
+            self.next_index += 1
 
-        if self.next_index == self.sparse.size:
-            self.sparse.resize(self.next_index * 2)
-            self.components.resize(self.next_index * 2)
-            self.entities.resize(self.next_index * 2)
+            if self.next_index == self.sparse.size:
+                self.sparse.resize(self.next_index * 2)
+                self.components.resize(self.next_index * 2)
+                self.entities.resize(self.next_index * 2)
 
-        print(self.sparse)
-        print(self.components)
-        print(self.entities)
+        else:
+            self.components[self.sparse[entityid]] = component_object
+
+    def get(self, entityid):
+        if entityid in self.entities:
+            return self.components[self.sparse[entityid]]
+        else:
+            return None
 
 
-newSparse = SparseSetV3("Position")
-next_entity = 0
+# NewWorld = World()
+#
+# PositionSparse = SparseSet("Position")
+# VelocitySparse = SparseSet("Velocity")
+# PlayerControlledSparse = SparseSet("PlayerControlled")
+#
+# player_one = 2
+# PositionSparse.add(player_one, Position(x=0, y=0))
+# VelocitySparse.add(player_one, Velocity(x=0, y=0))
+# PlayerControlledSparse.add(player_one, PlayerControlled())
+#
+#
+# player_two = 4
+# PositionSparse.add(player_two, Position(x=1, y=1))
+# VelocitySparse.add(player_two, Velocity(x=0, y=0))
+#
+#
+# for entity in NewWorld.view(PositionSparse, VelocitySparse):
+#    print(entity)
 
-while True:
-    input()
-    newSparse.add(next_entity, Position(x=next_entity, y=0))
-
-    #    print(newSparse.sparse)
-    #    print(newSparse.components)
-    #    print(newSparse.entities)
-
-    next_entity += 1
 
 # world = World()
 # game_on = True

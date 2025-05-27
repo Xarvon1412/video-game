@@ -51,5 +51,4 @@ while game_on:
                 game_state = 0
 
 
-print(SparseSet.component_types)
 quit()
