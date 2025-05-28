@@ -1,7 +1,6 @@
 from entity_manager import World, SparseSet
 import movement_components
 from input_system import InputSystem, PlayerControlled
-import input_system
 from movement_system import MovementSystem, RenderSystem
 
 world = World()
