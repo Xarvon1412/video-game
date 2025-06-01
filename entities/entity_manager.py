@@ -71,6 +71,20 @@ class SparseSet:
         else:
             self.components[self.sparse[entityid]] = component_object
 
+    def remove(self, entity):
+        if entity in self.entities:
+            temp = (
+                self.sparse[self.entities[self.next_index - 1]],
+                self.entities[self.next_index - 1],
+                self.components[self.next_index - 1],
+            )
+            temp_component = self.components[self.next_index - 1]
+            temp_entity = self.entities[self.next_index - 1]
+            print(temp)
+
+        else:
+            pass
+
     def get(self, entityid):
         if entityid in self.entities:
             return self.components[self.sparse[entityid]]

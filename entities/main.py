@@ -27,27 +27,34 @@ PositionComponents.add(enemy1, movement_components.Position(x=0, y=0))
 player2 = world.create_entity()
 PositionComponents.add(player2, movement_components.Position(x=0, y=0))
 
+player3 = world.create_entity()
+PositionComponents.add(player3, movement_components.Position(x=3, y=0))
+PlayerControlledComponents.add(player3, PlayerControlled())
 
-while game_on:
-    if game_state == 0:
-        break
-    while game_state == 1:
-        for entity in world.view(PositionComponents, PlayerControlledComponents):
-            user_input = InputSystem.get_input()
-            if InputSystem.check_input_type(user_input) == 1:
-                VelocityComponents.add(
-                    entity,
-                    movement_components.Velocity(
-                        x=InputSystem.direction_map[user_input][0],
-                        y=InputSystem.direction_map[user_input][1],
-                    ),
-                )
-                MovementSystem.move(
-                    PositionComponents.get(entity), VelocityComponents.get(entity)
-                )
-                RenderSystem.render(PositionComponents.get(entity))
-            else:
-                game_state = 0
+print(world.view(PositionComponents, PlayerControlledComponents))
+PositionComponents.remove(player3)
+
+
+# while game_on:
+#    if game_state == 0:
+#        break
+#    while game_state == 1:
+#        for entity in world.view(PositionComponents, PlayerControlledComponents):
+#            user_input = InputSystem.get_input()
+#            if InputSystem.check_input_type(user_input) == 1:
+#                VelocityComponents.add(
+#                    entity,
+#                    movement_components.Velocity(
+#                        x=InputSystem.direction_map[user_input][0],
+#                        y=InputSystem.direction_map[user_input][1],
+#                    ),
+#                )
+#                MovementSystem.move(
+#                    PositionComponents.get(entity), VelocityComponents.get(entity)
+#                )
+#                RenderSystem.render(PositionComponents.get(entity))
+#            else:
+#                game_state = 0
 
 
 quit()
