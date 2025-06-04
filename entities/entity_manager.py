@@ -6,7 +6,7 @@ STARTING_COMPONENT_COUNT = 5
 class World:
     def __init__(self):
         self.entities = set()
-        self.entity_count = 1
+        self.entity_count = 0
 
     def create_entity(self):
         entity_id = self.entity_count
@@ -32,7 +32,7 @@ class World:
             entity_set = set(component.entities)
             shared_entities &= entity_set
 
-        shared_entities.discard(0)
+        shared_entities.discard(-1)
         return shared_entities
 
 
@@ -42,9 +42,9 @@ class SparseSet:
     def __init__(self, component_type):
         self.type = component_type
         self.next_index = 0
-        self.sparse = numpy.zeros(shape=STARTING_COMPONENT_COUNT, dtype="uint")
+        self.sparse = numpy.full(shape=STARTING_COMPONENT_COUNT, fill_value=-1, dtype="int")
         self.components = numpy.empty(STARTING_COMPONENT_COUNT, dtype="O")
-        self.entities = numpy.zeros(STARTING_COMPONENT_COUNT, dtype="uint")
+        self.entities = numpy.full(STARTING_COMPONENT_COUNT, fill_value=-1, dtype="int")
 
     def __repr__(self):
         return f"Component: {self.type}"
@@ -78,9 +78,22 @@ class SparseSet:
                 self.entities[self.next_index - 1],
                 self.components[self.next_index - 1],
             )
-            temp_component = self.components[self.next_index - 1]
-            temp_entity = self.entities[self.next_index - 1]
-            print(temp)
+#            print(temp)
+
+#            print(self.sparse[self.entities[entity]])
+#            print(self.entities[entity])
+#            print(self.components[entity])
+
+
+
+            self.entities[entity] = temp[0]
+            self.components[entity] = temp[1]
+
+#            print(self.sparse[self.entities[entity]])
+#            print(self.entities[entity])
+#            print(self.components[entity])
+
+
 
         else:
             pass
