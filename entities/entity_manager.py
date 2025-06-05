@@ -6,7 +6,7 @@ STARTING_COMPONENT_COUNT = 5
 class World:
     def __init__(self):
         self.entities = set()
-        self.entity_count = 0
+        self.entity_count = 1
 
     def create_entity(self):
         entity_id = self.entity_count
@@ -32,7 +32,7 @@ class World:
             entity_set = set(component.entities)
             shared_entities &= entity_set
 
-        shared_entities.discard(-1)
+        shared_entities.discard(0)
         return shared_entities
 
 
@@ -41,59 +41,58 @@ class SparseSet:
 
     def __init__(self, component_type):
         self.type = component_type
-        self.next_index = 0
-        self.sparse = numpy.full(shape=STARTING_COMPONENT_COUNT, fill_value=-1, dtype="int")
+        self.size = 1
+        self.sparse = numpy.zeros(shape=STARTING_COMPONENT_COUNT, dtype="int")
         self.components = numpy.empty(STARTING_COMPONENT_COUNT, dtype="O")
-        self.entities = numpy.full(STARTING_COMPONENT_COUNT, fill_value=-1, dtype="int")
+        self.entities = numpy.zeros(STARTING_COMPONENT_COUNT, dtype="int")
 
     def __repr__(self):
         return f"Component: {self.type}"
 
+    def has(self, entity_id):
+        return (
+            self.sparse[entity_id] >= 1
+            and self.sparse[entity_id] < self.size
+            and self.entities[self.sparse[entity_id]] == entity_id
+        )
+
     def add(self, entityid, component_object):
         if entityid not in self.entities:
             # Adds index of component and entity into sparse map at index of entity_id
-            self.sparse[entityid] = self.next_index
+            self.sparse[entityid] = self.size
 
             # Adds component into contiguous array for quick access
-            self.components[self.next_index] = component_object
+            self.components[self.size] = component_object
 
             # Adds entity_id into continguous array as mirror of component array
-            self.entities[self.next_index] = entityid
+            self.entities[self.size] = entityid
 
             # Increments index due to array being pre-configured
-            self.next_index += 1
+            self.size += 1
 
-            if self.next_index == self.sparse.size:
-                self.sparse.resize(self.next_index * 2)
-                self.components.resize(self.next_index * 2)
-                self.entities.resize(self.next_index * 2)
+            if self.size == self.sparse.size:
+                self.sparse.resize(self.size * 2)
+                self.components.resize(self.size * 2)
+                self.entities.resize(self.size * 2)
 
         else:
             self.components[self.sparse[entityid]] = component_object
 
     def remove(self, entity):
         if entity in self.entities:
-            temp = (
-                self.sparse[self.entities[self.next_index - 1]],
-                self.entities[self.next_index - 1],
-                self.components[self.next_index - 1],
-            )
-#            print(temp)
+            last_entity = self.entities[self.size - 1]
 
-#            print(self.sparse[self.entities[entity]])
-#            print(self.entities[entity])
-#            print(self.components[entity])
+            self.components[self.sparse[entity]] = self.components[
+                self.sparse[last_entity]
+            ]
+            self.entities[self.sparse[entity]] = self.entities[self.sparse[last_entity]]
+            self.sparse[last_entity] = self.sparse[entity]
 
+            self.sparse[entity] = 0
+            self.components[self.size - 1] = None
+            self.entities[self.size - 1] = 0
 
-
-            self.entities[entity] = temp[0]
-            self.components[entity] = temp[1]
-
-#            print(self.sparse[self.entities[entity]])
-#            print(self.entities[entity])
-#            print(self.components[entity])
-
-
+            self.size -= 1
 
         else:
             pass
