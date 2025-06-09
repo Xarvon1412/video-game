@@ -1,19 +1,32 @@
 import numpy
 
-STARTING_COMPONENT_COUNT = 5
-
 
 class World:
     def __init__(self):
         self.entities = set()
         self.entity_count = 1
-        self.component_types = []
+        self.component_types = {}
 
-    def create_entity(self):
+    def create_entity(self) -> int:
         entity_id = self.entity_count
         self.entities.add(entity_id)
         self.entity_count += 1
         return entity_id
+
+    def register_component(self, component):
+#Does this need to have an if/else? Maybe it could just be update()
+        if component in self.component_types:
+            pass
+        else:
+            self.component_types.update({component.name: SparseSet()})
+
+    def add_component(self, entity, component, component_data):
+        self.register_component(component.name)
+
+        self.component_types[component.name].add(entity, component_data)
+
+        print(self.component_types[component.name].get(entity))
+
 
     def components_for_entity(self, entity):
         if entity in self.entities:
@@ -36,26 +49,19 @@ class World:
         shared_entities.discard(0)
         return shared_entities
 
-    def register_component(self, component_data):
-        if component_data.name in self.component_types:
-            pass
-        else:
-
-
-        pass
-
 
 
 
 class SparseSet:
     component_types = []
 
-    def __init__(self, component_type):
+    def __init__(self, component_type="fuck"):
         self.type = component_type
         self.size = 1
-        self.sparse = numpy.zeros(shape=STARTING_COMPONENT_COUNT, dtype="int")
-        self.components = numpy.empty(STARTING_COMPONENT_COUNT, dtype="O")
-        self.entities = numpy.zeros(STARTING_COMPONENT_COUNT, dtype="int")
+        self.max_size = 5
+        self.sparse = numpy.zeros(self.max_size, dtype="int")
+        self.components = numpy.empty(self.max_size, dtype="O")
+        self.entities = numpy.zeros(self.max_size, dtype="int")
 
     def __repr__(self):
         return f"Component: {self.type}"
@@ -68,7 +74,7 @@ class SparseSet:
         )
 
     def add(self, entityid, component_object):
-        if self.has(entityid):
+        if not self.has(entityid):
             # Adds index of component and entity into sparse map at index of entity_id
             self.sparse[entityid] = self.size
 
@@ -81,16 +87,21 @@ class SparseSet:
             # Increments index due to array being pre-configured
             self.size += 1
 
-            if self.size == self.sparse.size:
-                self.sparse.resize(self.size * 2)
-                self.components.resize(self.size * 2)
-                self.entities.resize(self.size * 2)
+            if self.size == self.max_size:
+                self.double_sparse_size()
+                self.max_size *= 2
 
         else:
             self.components[self.sparse[entityid]] = component_object
 
+    def double_sparse_size(self):
+        self.sparse.resize(self.max_size * 2)
+        self.components.resize(self.max_size * 2)
+        self.entities.resize(self.max_size * 2)
+        
+
     def remove(self, entity):
-        if entity in self.entities:
+        if self.has(entity):
             last_entity = self.entities[self.size - 1]
 
             self.components[self.sparse[entity]] = self.components[
@@ -109,7 +120,7 @@ class SparseSet:
             pass
 
     def get(self, entityid):
-        if entityid in self.entities:
+        if self.has(entityid):
             return self.components[self.sparse[entityid]]
         else:
             return None

@@ -12,39 +12,47 @@ world = World()
 game_on = True
 game_state = 1
 
-PositionComponents = SparseSet(movement_components.Position.name)
-VelocityComponents = SparseSet(movement_components.Velocity.name)
-PlayerControlledComponents = SparseSet(PlayerControlled.name)
-PerspectiveComponents = SparseSet(movement_components.Perspective.name)
-
 player = world.create_entity()
-PositionComponents.add(player, movement_components.Position(x=1, y=0))
-PlayerControlledComponents.add(player, PlayerControlled())
 
-enemy1 = world.create_entity()
-PositionComponents.add(enemy1, movement_components.Position(x=2, y=0))
+world.register_component(movement_components.Position)
+world.register_component(movement_components.Velocity)
 
-player2 = world.create_entity()
-PositionComponents.add(player2, movement_components.Position(x=3, y=0))
+world.add_component(player, movement_components.Position, movement_components.Position(x=0, y=0))
 
-player3 = world.create_entity()
-PositionComponents.add(player3, movement_components.Position(x=4, y=0))
-PlayerControlledComponents.add(player3, PlayerControlled())
+#PositionComponents = SparseSet(movement_components.Position.name)
+#VelocityComponents = SparseSet(movement_components.Velocity.name)
+#PlayerControlledComponents = SparseSet(PlayerControlled.name)
+#PerspectiveComponents = SparseSet(movement_components.Perspective.name)
+#
+#player = world.create_entity()
+#PositionComponents.add(player, movement_components.Position(x=1, y=0))
+#PlayerControlledComponents.add(player, PlayerControlled())
+#
+#enemy1 = world.create_entity()
+#PositionComponents.add(enemy1, movement_components.Position(x=2, y=0))
+#
+#player2 = world.create_entity()
+#PositionComponents.add(player2, movement_components.Position(x=3, y=0))
+#
+#player3 = world.create_entity()
+#PositionComponents.add(player3, movement_components.Position(x=4, y=0))
+#PlayerControlledComponents.add(player3, PlayerControlled())
+#
+#player4 = world.create_entity()
+#PositionComponents.add(player4, movement_components.Position(x=5, y=0))
+#
+#print(PositionComponents.sparse)
+#print(PositionComponents.components)
+#print(PositionComponents.entities)
+#
+#
+#PositionComponents.remove(player2)
+#
+#print(PositionComponents.sparse)
+#print(PositionComponents.components)
+#print(PositionComponents.entities)
 
-player4 = world.create_entity()
-PositionComponents.add(player4, movement_components.Position(x=5, y=0))
-
-print(PositionComponents.sparse)
-print(PositionComponents.components)
-print(PositionComponents.entities)
-
-
-PositionComponents.remove(player2)
-
-print(PositionComponents.sparse)
-print(PositionComponents.components)
-print(PositionComponents.entities)
-
+###################################
 # while game_on:
 #    if game_state == 0:
 #        break
