@@ -7,6 +7,7 @@ class World:
     def __init__(self):
         self.entities = set()
         self.entity_count = 1
+        self.component_types = []
 
     def create_entity(self):
         entity_id = self.entity_count
@@ -35,6 +36,16 @@ class World:
         shared_entities.discard(0)
         return shared_entities
 
+    def register_component(self, component_data):
+        if component_data.name in self.component_types:
+            pass
+        else:
+
+
+        pass
+
+
+
 
 class SparseSet:
     component_types = []
@@ -57,7 +68,7 @@ class SparseSet:
         )
 
     def add(self, entityid, component_object):
-        if entityid not in self.entities:
+        if self.has(entityid):
             # Adds index of component and entity into sparse map at index of entity_id
             self.sparse[entityid] = self.size
 
