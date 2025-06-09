@@ -20,13 +20,14 @@ class World:
         else:
             self.component_types.update({component.name: SparseSet()})
 
-    def add_component(self, entity, component, component_data):
+    def add_component(self, entity, component):
         self.register_component(component.name)
 
-        self.component_types[component.name].add(entity, component_data)
+        self.component_types[component.name].add(entity, component)
 
-        print(self.component_types[component.name].get(entity))
-
+    def get(self, component, entity):
+        return self.component_types
+        return self.component_types[component.name].get(entity, component)
 
     def components_for_entity(self, entity):
         if entity in self.entities:
@@ -55,7 +56,7 @@ class World:
 class SparseSet:
     component_types = []
 
-    def __init__(self, component_type="fuck"):
+    def __init__(self, component_type):
         self.type = component_type
         self.size = 1
         self.max_size = 5

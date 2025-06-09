@@ -17,7 +17,9 @@ player = world.create_entity()
 world.register_component(movement_components.Position)
 world.register_component(movement_components.Velocity)
 
-world.add_component(player, movement_components.Position, movement_components.Position(x=0, y=0))
+world.add_component(player, movement_components.Position(x=0, y=0))
+
+print(world.get(player, movement_components.Position))
 
 #PositionComponents = SparseSet(movement_components.Position.name)
 #VelocityComponents = SparseSet(movement_components.Velocity.name)
