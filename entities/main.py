@@ -12,14 +12,16 @@ world = World()
 game_on = True
 game_state = 1
 
-player = world.create_entity()
+player1 = world.create_entity()
+player2 = world.create_entity()
 
-world.register_component(movement_components.Position)
-world.register_component(movement_components.Velocity)
 
-world.add_component(player, movement_components.Position(x=0, y=0))
+world.add_component(player1, movement_components.Position(x=0, y=0))
+world.add_component(player1, movement_components.Velocity(x=1, y=1))
 
-print(world.get(player, movement_components.Position))
+world.add_component(player2, PlayerControlled())
+
+world.components_for_entity(player1)
 
 #PositionComponents = SparseSet(movement_components.Position.name)
 #VelocityComponents = SparseSet(movement_components.Velocity.name)

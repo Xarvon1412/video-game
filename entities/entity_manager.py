@@ -18,20 +18,20 @@ class World:
         if component in self.component_types:
             pass
         else:
-            self.component_types.update({component.name: SparseSet()})
+            self.component_types.update({component: SparseSet(component)})
 
     def add_component(self, entity, component):
         self.register_component(component.name)
 
         self.component_types[component.name].add(entity, component)
 
-    def get(self, component, entity):
-        return self.component_types
-        return self.component_types[component.name].get(entity, component)
+    def get(self, entity, component):
+        return self.component_types[component.name].get(entity)
 
     def components_for_entity(self, entity):
-        if entity in self.entities:
-            pass
+        for component in self.component_types.values():
+            if component.has(entity):
+                print(component)
 
     def view(self, *components):
         smallest_entity_list = components[0].entities
@@ -49,8 +49,6 @@ class World:
 
         shared_entities.discard(0)
         return shared_entities
-
-
 
 
 class SparseSet:
