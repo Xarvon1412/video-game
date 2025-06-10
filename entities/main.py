@@ -1,5 +1,3 @@
-#TEST
-
 from entity_manager import World, SparseSet
 import movement_components
 from input_system import InputSystem, PlayerControlled
